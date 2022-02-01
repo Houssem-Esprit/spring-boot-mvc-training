@@ -53,7 +53,9 @@
 		            <td th:text="${watchListItem.rating}"></td>
 		            <td th:text="${watchListItem.priority}"></td>
 		            <td th:text="${watchListItem.comment}"></td>
-					<td><a href="#" class="btn btn-info" role="button">Update</a></td>
+					<td><a href="#" class="btn btn-info" role="button"
+						th:href="@{/watchlistItemForm(id=${watchListItem.id})}">Update
+						</a></td>
 				</tr>
 		
 			</tbody>

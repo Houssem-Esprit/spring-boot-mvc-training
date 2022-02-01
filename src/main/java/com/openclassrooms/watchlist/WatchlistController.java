@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -40,22 +41,43 @@ public class WatchlistController {
 		return new ModelAndView(viewName, model);
 	}
 	
+	
+	
 	@GetMapping("/watchlistItemForm")
-	public ModelAndView showWatchlistItemForm() {
+	public ModelAndView showWatchlistItemForm(@RequestParam(required = false) Integer id) {
 		
 		String viewName = "watchlistItemForm";
 		Map<String, Object> model = new HashMap<String,Object>();
 		
-		model.put("watchListItem", new WatchListItem());
+		WatchListItem watchListItem = findWatchListItemById(id);
+		
+		if(watchListItem == null) {
+			model.put("watchListItem", new WatchListItem());
+		}else {
+			model.put("watchListItem", watchListItem);
+		}
 		
 		return new ModelAndView(viewName, model);
 	}
 	
+	
+	
+	
 	@PostMapping("/watchlistItemForm")
 	public ModelAndView submitWatchlistItemForm(WatchListItem watchLsitItem) {
 		
-		watchLsitItem.setId(index++);
-		watchListItems.add(watchLsitItem);
+		WatchListItem existingItem = findWatchListItemById(watchLsitItem.getId());
+		
+		if(existingItem == null) {
+			watchLsitItem.setId(index++);
+			watchListItems.add(watchLsitItem);
+		}else {
+			existingItem.setTitle(watchLsitItem.getTitle());
+			existingItem.setPriority(watchLsitItem.getPriority());
+			existingItem.setRating(watchLsitItem.getRating());
+			existingItem.setComment(watchLsitItem.getComment());
+		}
+		
 		
 		// we are using the RedirectView class to redirect user into another URL 
 		RedirectView redirectView = new RedirectView();
@@ -63,5 +85,17 @@ public class WatchlistController {
 		redirectView.setUrl("/watchlist");
 		
 		return new ModelAndView(redirectView);
+	}
+	
+	
+	
+	private WatchListItem findWatchListItemById(Integer id) {
+		for(WatchListItem watchListItem : watchListItems) {
+			if(watchListItem.getId().equals(id)) {
+				return watchListItem;
+			}
+		}
+		return null;
+
 	}
 }
