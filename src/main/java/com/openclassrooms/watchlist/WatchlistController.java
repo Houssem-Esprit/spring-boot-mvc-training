@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,7 +60,12 @@ public class WatchlistController {
 	
 	
 	@PostMapping("/watchlistItemForm")
-	public ModelAndView submitWatchlistItemForm(WatchListItem watchLsitItem) {
+	public ModelAndView submitWatchlistItemForm(@Valid WatchListItem watchLsitItem, BindingResult bindingResult) {
+		
+		// BindingResult: contains the validation result (if validation fails it will bind the errors to the template)
+		if(bindingResult.hasErrors()) {
+			return new ModelAndView("watchlistItemForm");
+		}
 		
 		WatchListItem existingItem = findWatchListItemById(watchLsitItem.getId());
 		
