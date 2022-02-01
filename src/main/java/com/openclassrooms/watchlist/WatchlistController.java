@@ -7,23 +7,25 @@ import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class WatchlistController {
 	
 	private List<WatchListItem> watchListItems = new ArrayList<WatchListItem>();
-	private static int index = 1;
+	private static int index = 1; 
 	
 
 	@GetMapping("/watchlist")
 	public ModelAndView getWatchlist() {
 		
-		watchListItems.clear();
-		watchListItems.add(new WatchListItem("Lion King","8.5","high","Hakuna Matata",index++));
-		watchListItems.add(new WatchListItem("Frozen","7.5","medium","Let's go!",index++));
-		watchListItems.add(new WatchListItem("Cars","7.1","low","VROOM!",index++));
-		watchListItems.add(new WatchListItem("Wall-E","8.5","high","You are crying!",index++));
+//		watchListItems.clear();
+//		watchListItems.add(new WatchListItem("Lion King","8.5","high","Hakuna Matata",index++));
+//		watchListItems.add(new WatchListItem("Frozen","7.5","medium","Let's go!",index++));
+//		watchListItems.add(new WatchListItem("Cars","7.1","low","VROOM!",index++));
+//		watchListItems.add(new WatchListItem("Wall-E","8.5","high","You are crying!",index++));
 		
 		
 		// this is represent the view name which will be sent to the viewResolver
@@ -36,5 +38,30 @@ public class WatchlistController {
 		
 		// return the combined elements using the ModekAndView class
 		return new ModelAndView(viewName, model);
+	}
+	
+	@GetMapping("/watchlistItemForm")
+	public ModelAndView showWatchlistItemForm() {
+		
+		String viewName = "watchlistItemForm";
+		Map<String, Object> model = new HashMap<String,Object>();
+		
+		model.put("watchListItem", new WatchListItem());
+		
+		return new ModelAndView(viewName, model);
+	}
+	
+	@PostMapping("/watchlistItemForm")
+	public ModelAndView submitWatchlistItemForm(WatchListItem watchLsitItem) {
+		
+		watchLsitItem.setId(index++);
+		watchListItems.add(watchLsitItem);
+		
+		// we are using the RedirectView class to redirect user into another URL 
+		RedirectView redirectView = new RedirectView();
+		
+		redirectView.setUrl("/watchlist");
+		
+		return new ModelAndView(redirectView);
 	}
 }
